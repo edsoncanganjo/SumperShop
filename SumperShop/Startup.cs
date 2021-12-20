@@ -34,7 +34,7 @@ namespace SumperShop
             services.AddTransient<SeedDb>();
 
             // Service to start the Repository, Dependency Injection
-            services.AddScoped<IRepository, Repository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
 
             services.AddControllersWithViews();
         }
