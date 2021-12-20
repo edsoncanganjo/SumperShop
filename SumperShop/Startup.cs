@@ -30,6 +30,9 @@ namespace SumperShop
                 cf.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            // Service to delivery the SeedDb throw Dependency Injection: Adding in flash memory
+            services.AddTransient<SeedDb>();
+
             services.AddControllersWithViews();
         }
 

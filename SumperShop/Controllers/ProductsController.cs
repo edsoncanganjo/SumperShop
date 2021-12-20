@@ -141,6 +141,7 @@ namespace SumperShop.Controllers
         {
             var product = await _context.Products.FindAsync(id);
             _context.Products.Remove(product);
+            // Send all context informations to DB
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
