@@ -12,17 +12,17 @@ namespace SumperShop.Controllers
 {
     public class ProductsController : Controller
     {
-        private readonly DataContext _context;
+        private readonly IRepository _repository;
 
-        public ProductsController(DataContext context)
+        public ProductsController(IRepository repository)
         {
-            _context = context;
+            this._repository = repository;
         }
 
         // GET: Products
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Products.ToListAsync());
+            return View(_repository.GetProducts());
         }
 
         // GET: Products/Details/5
@@ -33,8 +33,8 @@ namespace SumperShop.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var product = this._repository.GetProduct(id.Value);
+
             if (product == null)
             {
                 return NotFound();
@@ -58,22 +58,24 @@ namespace SumperShop.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
+                this._repository.AddProduct(product);
+                await this._repository.SaveAllAsync();
+
                 return RedirectToAction(nameof(Index));
             }
             return View(product);
         }
 
         // GET: Products/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var product = await _context.Products.FindAsync(id);
+            var product = this._repository.GetProduct(id.Value);
+
             if (product == null)
             {
                 return NotFound();
@@ -97,12 +99,12 @@ namespace SumperShop.Controllers
             {
                 try
                 {
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
+                    this._repository.UpdateProduct(product);
+                    await this._repository.SaveAllAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductExists(product.Id))
+                    if (!this._repository.ProductExists(product.Id))
                     {
                         return NotFound();
                     }
@@ -117,15 +119,15 @@ namespace SumperShop.Controllers
         }
 
         // GET: Products/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var product = this._repository.GetProduct(id.Value);
+
             if (product == null)
             {
                 return NotFound();
@@ -139,16 +141,14 @@ namespace SumperShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = await _context.Products.FindAsync(id);
-            _context.Products.Remove(product);
+            var product = this._repository.GetProduct(id);
+            this._repository.DeleteProduct(product);
+
             // Send all context informations to DB
-            await _context.SaveChangesAsync();
+            await this._repository.SaveAllAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProductExists(int id)
-        {
-            return _context.Products.Any(e => e.Id == id);
-        }
     }
 }
