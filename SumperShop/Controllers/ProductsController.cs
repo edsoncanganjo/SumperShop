@@ -17,11 +17,16 @@ namespace SumperShop.Controllers
     {
         private readonly IProductRepository _productRepository;
         private readonly IUserHelper _userHelper;
+        private readonly IImageHelper _imageHelper;
+        private readonly IConverterHelper _converterHelper;
 
-        public ProductsController(IProductRepository productRepository, IUserHelper userHelper)
+        public ProductsController(IProductRepository productRepository, 
+            IUserHelper userHelper, IImageHelper imageHelper, IConverterHelper converterHelper)
         {
             this._productRepository = productRepository;
             this._userHelper = userHelper;
+            this._imageHelper = imageHelper;
+            this._converterHelper = converterHelper;
         }
 
         // GET: Products
@@ -67,24 +72,12 @@ namespace SumperShop.Controllers
 
                 if (model.ImageFile != null && model.ImageFile.Length > 0)
                 {
-                    var guid = Guid.NewGuid().ToString();
-                    var file = $"{guid}.jpg";
 
-                    path = Path.Combine(
-                        Directory.GetCurrentDirectory(),
-                        @"wwwroot/images/products",
-                        file
-                        );
-
-                    using (var stream = new FileStream(path, FileMode.Create))
-                    {
-                        await model.ImageFile.CopyToAsync(stream);
-                    }
-
-                    path = $"~/images/products/{file}";
+                    path = await this._imageHelper.UploadImageAsync(model.ImageFile, "products");
                 }
 
-                var product = this.ToProduct(model, path);
+                //var product = this.ToProduct(model, path);
+                var product = this._converterHelper.ToProduct(model, path, true);
                 //TODO: Change to the logged user
                 product.User = await this._userHelper.GetUserByEmailAsync("a44502@alunos.isel.pt");
 
@@ -125,24 +118,8 @@ namespace SumperShop.Controllers
             {
                 return NotFound();
             }
-            var model = this.ToProductViewModel(product);
+            var model = this._converterHelper.ToProductViewModel(product);
             return View(model);
-        }
-
-        private ProductViewModel ToProductViewModel(Product product)
-        {
-            return new ProductViewModel {
-                Id = product.Id,
-                ImageUrl = product.ImageUrl,
-                Name = product.Name,
-                IsAvailable = product.IsAvailable,
-                LastPurchase = product.LastPurchase,
-                LastSale = product.LastSale,
-                Price = product.Price,
-                Stock = product.Stock,
-                User = product.User,
-
-            };
         }
 
         // POST: Products/Edit/5
@@ -165,22 +142,10 @@ namespace SumperShop.Controllers
 
                     if(model.ImageFile != null && model.ImageFile.Length > 0)
                     {
-                        var guid = Guid.NewGuid().ToString();
-                        var file = $"{guid}.jpg";
-
-                        path = Path.Combine(
-                            Directory.GetCurrentDirectory(),
-                            @"wwwroot/images/products",
-                            file);
-                        using(var stream = new FileStream(path, FileMode.Create))
-                        {
-                            await model.ImageFile.CopyToAsync(stream);
-                        }
-
-                        path = $"~/images/products/{file}";
+                        path = await this._imageHelper.UploadImageAsync(model.ImageFile, "products");
                     }
 
-                    var product = this.ToProduct(model, path);
+                    var product = this._converterHelper.ToProduct(model, path, false);
 
                     //TODO: Change to the logged user
                     product.User = await this._userHelper.GetUserByEmailAsync("a44502@alunos.isel.pt");

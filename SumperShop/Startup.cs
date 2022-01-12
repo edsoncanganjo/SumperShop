@@ -47,8 +47,10 @@ namespace SumperShop
             // Service to delivery the SeedDb throw Dependency Injection: Adding in flash memory
             services.AddTransient<SeedDb>();
 
-            // UserHelper dependency injection
+            // Helper's dependency injection
             services.AddScoped<IUserHelper, UserHelper>();
+            services.AddScoped<IImageHelper, ImageHelper>();
+            services.AddScoped<IConverterHelper, ConverterHelper>();
 
             // Service to start the Repository, Dependency Injection
             services.AddScoped<IProductRepository, ProductRepository>();
