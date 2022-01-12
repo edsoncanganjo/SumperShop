@@ -28,5 +28,12 @@ namespace SumperShop.Data.Entities
 
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
         public double Stock { get; set; }
+
+        public User User { get; set; }
+
+        public string ImageFullPath
+        {
+            get => string.IsNullOrWhiteSpace(ImageUrl) ? null : $"https://localhost:44386{ImageUrl.Substring(1)}";
+        }
     }
 }

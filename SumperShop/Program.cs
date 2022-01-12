@@ -22,7 +22,10 @@ namespace SumperShop
             // Run App;
             host.Run();
         }
-
+        /// <summary>
+        /// Like a middleware SEED to automaticaly populate my DB
+        /// </summary>
+        /// <param name="host"></param>
         private static void RunSeeding(IHost host)
         {
             var scopeFactory = host.Services.GetService<IServiceScopeFactory>();

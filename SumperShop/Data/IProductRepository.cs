@@ -8,5 +8,6 @@ namespace SumperShop.Data
 {
     public interface IProductRepository : IGenericRepository<Product>
     {
+        public IQueryable GetAllWithUsers();
     }
 }
