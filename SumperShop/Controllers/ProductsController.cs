@@ -17,15 +17,15 @@ namespace SumperShop.Controllers
     {
         private readonly IProductRepository _productRepository;
         private readonly IUserHelper _userHelper;
-        private readonly IImageHelper _imageHelper;
+        private readonly IBlobHelper _blobHelper;
         private readonly IConverterHelper _converterHelper;
 
         public ProductsController(IProductRepository productRepository, 
-            IUserHelper userHelper, IImageHelper imageHelper, IConverterHelper converterHelper)
+            IUserHelper userHelper, IBlobHelper blobHelper, IConverterHelper converterHelper)
         {
             this._productRepository = productRepository;
             this._userHelper = userHelper;
-            this._imageHelper = imageHelper;
+            this._blobHelper = blobHelper;
             this._converterHelper = converterHelper;
         }
 
@@ -68,16 +68,16 @@ namespace SumperShop.Controllers
         {
             if (ModelState.IsValid)
             {
-                var path = string.Empty;
+                Guid imageId = Guid.Empty;
 
                 if (model.ImageFile != null && model.ImageFile.Length > 0)
                 {
 
-                    path = await this._imageHelper.UploadImageAsync(model.ImageFile, "products");
+                    imageId = await this._blobHelper.UploadBlobAsync(model.ImageFile, "products");
                 }
 
                 //var product = this.ToProduct(model, path);
-                var product = this._converterHelper.ToProduct(model, path, true);
+                var product = this._converterHelper.ToProduct(model, imageId, true);
                 //TODO: Change to the logged user
                 product.User = await this._userHelper.GetUserByEmailAsync("a44502@alunos.isel.pt");
 
@@ -88,12 +88,12 @@ namespace SumperShop.Controllers
             return View(model);
         }
 
-        private Product ToProduct(ProductViewModel model, string path)
+        private Product ToProduct(ProductViewModel model, Guid imageId)
         {
             return new Product
             {
                 Id = model.Id,
-                ImageUrl = path,
+                ImageId = imageId,
                 Name = model.Name,
                 IsAvailable = model.IsAvailable,
                 LastPurchase = model.LastPurchase,
@@ -138,14 +138,14 @@ namespace SumperShop.Controllers
             {
                 try
                 {
-                    var path = model.ImageUrl;
+                    Guid imageId = model.ImageId;
 
                     if(model.ImageFile != null && model.ImageFile.Length > 0)
                     {
-                        path = await this._imageHelper.UploadImageAsync(model.ImageFile, "products");
+                        imageId = await this._blobHelper.UploadBlobAsync(model.ImageFile, "products");
                     }
 
-                    var product = this._converterHelper.ToProduct(model, path, false);
+                    var product = this._converterHelper.ToProduct(model, imageId, false);
 
                     //TODO: Change to the logged user
                     product.User = await this._userHelper.GetUserByEmailAsync("a44502@alunos.isel.pt");

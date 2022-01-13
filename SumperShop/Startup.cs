@@ -49,7 +49,7 @@ namespace SumperShop
 
             // Helper's dependency injection
             services.AddScoped<IUserHelper, UserHelper>();
-            services.AddScoped<IImageHelper, ImageHelper>();
+            services.AddScoped<IBlobHelper, BlobHelper>();
             services.AddScoped<IConverterHelper, ConverterHelper>();
 
             // Service to start the Repository, Dependency Injection

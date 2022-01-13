@@ -15,7 +15,7 @@ namespace SumperShop.Data.Entities
         public decimal Price { get; set; }
         
         [Display(Name = "Image")]
-        public string ImageUrl { get; set; }
+        public Guid ImageId { get; set; }
 
         [Display(Name = "Last Purchase")]
         public DateTime? LastPurchase { get; set; }
@@ -31,9 +31,8 @@ namespace SumperShop.Data.Entities
 
         public User User { get; set; }
 
-        public string ImageFullPath
-        {
-            get => string.IsNullOrWhiteSpace(ImageUrl) ? null : $"https://sumpershop.azurewebsites.net{ImageUrl.Substring(1)}";
-        }
+        public string ImageFullPath => ImageId == Guid.Empty 
+            ? $"https://sumpershop.azurewebsites.net/images/noimage.png" 
+            : $"https://sumpershop.blob.core.windows.net/products/{ImageId}";
     }
 }
