@@ -33,7 +33,7 @@ namespace SumperShop.Data.Entities
 
         public string ImageFullPath
         {
-            get => string.IsNullOrWhiteSpace(ImageUrl) ? null : $"https://localhost:44386{ImageUrl.Substring(1)}";
+            get => string.IsNullOrWhiteSpace(ImageUrl) ? null : $"https://sumpershop.azurewebsites.net{ImageUrl.Substring(1)}";
         }
     }
 }
