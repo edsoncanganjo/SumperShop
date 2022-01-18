@@ -25,5 +25,7 @@ namespace SumperShop.Controllers.API
             // Ok => makes the serializer
             return Ok(_productRepository.GetAllWithUsers());
         }
+
+        
     }
 }
