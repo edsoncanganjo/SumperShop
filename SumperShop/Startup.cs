@@ -76,8 +76,9 @@ namespace SumperShop
             app.UseStaticFiles();
 
             app.UseRouting();
-            // For the users
-            app.UseAuthorization();
+
+            // For the users validations and authentications
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
