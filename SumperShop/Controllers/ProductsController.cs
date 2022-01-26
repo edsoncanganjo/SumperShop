@@ -80,8 +80,8 @@ namespace SumperShop.Controllers
 
                 //var product = this.ToProduct(model, path);
                 var product = this._converterHelper.ToProduct(model, imageId, true);
-                //TODO: Change to the logged user
-                product.User = await this._userHelper.GetUserByEmailAsync("a44502@alunos.isel.pt");
+
+                product.User = await this._userHelper.GetUserByEmailAsync(this.User.Identity.Name);
 
                 await this._productRepository.CreateAsync(product);
 
@@ -152,7 +152,7 @@ namespace SumperShop.Controllers
                     var product = this._converterHelper.ToProduct(model, imageId, false);
 
                     //TODO: Change to the logged user
-                    product.User = await this._userHelper.GetUserByEmailAsync("a44502@alunos.isel.pt");
+                    product.User = await this._userHelper.GetUserByEmailAsync(this.User.Identity.Name);
                     await _productRepository.UpdateAsync(product);
                 }
                 catch (DbUpdateConcurrencyException)
